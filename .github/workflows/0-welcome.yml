@@ -20,8 +20,22 @@ permissions:
   pull-requests: write
 
 jobs:
+  repoguard-security-scan:
+    name: RepoGuard Pre-Execution Security Gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Run RepoGuard Security Check
+        uses: ALADETAN-IFE/repoguard-action@1f5947a155f654749155b712564e6cb0c45e63d7 # v1
+        with:
+          minimum-severity: medium
+          fail-on: high
   # Get the current step to only run the main job when the learner is on the same step.
   get_current_step:
+    needs: [repoguard-security-scan]
     name: Check current step number
     runs-on: ubuntu-latest
     steps:
